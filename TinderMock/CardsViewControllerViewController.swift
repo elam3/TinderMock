@@ -29,7 +29,7 @@ class CardsViewControllerViewController: UIViewController {
         // Common properties to access from Pan Gesture Recognizer
         let location = (sender as AnyObject).location(in: view)
         let translation = (sender as AnyObject).translation(in: view)
-        let velocity = (sender as AnyObject).velocity(in: view)
+        //let velocity = (sender as AnyObject).velocity(in: view)
         
         // Initialize a rotation transform
         cardImageView.transform = cardImageView.transform.rotated(by: CGFloat())
@@ -61,7 +61,23 @@ class CardsViewControllerViewController: UIViewController {
                 cardImageView.transform = cardImageView.transform.rotated(by: CGFloat(-3.14 * dir * M_PI / 180))
             }
         } else if (sender as AnyObject).state == .ended {
-            
+            // If the x translation is greater than 50, animate it off screen to the right. 
+            if translation.x > 50 {
+                UIView.animate(withDuration:0.4, animations: {
+                    self.cardImageView.center = CGPoint(x: self.cardInitialCenter.x + 500, y: self.cardInitialCenter.y + translation.y)
+                })
+
+            }
+            // If the x translation is less than 50, animate it off screen to the left.
+            else if translation.x < 50 {
+                UIView.animate(withDuration:0.4, animations: {
+                    self.cardImageView.center = CGPoint(x: self.cardInitialCenter.x - 500, y: self.cardInitialCenter.y + translation.y)
+                })
+            }
+            // Otherwise, restore the original center and transform.
+            else {
+                cardImageView.transform = CGAffineTransform.identity
+            }
         }
     }
 
