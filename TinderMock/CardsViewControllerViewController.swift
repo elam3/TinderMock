@@ -31,12 +31,35 @@ class CardsViewControllerViewController: UIViewController {
         let translation = (sender as AnyObject).translation(in: view)
         let velocity = (sender as AnyObject).velocity(in: view)
         
+        // Initialize a rotation transform
+        cardImageView.transform = cardImageView.transform.rotated(by: CGFloat())
+        
+        
         print("translation \(translation)")
         
         if (sender as AnyObject).state == .began {
             cardInitialCenter = cardImageView.center
         } else if (sender as AnyObject).state == .changed {
+            //cardImageView.center = CGPoint(x: cardInitialCenter.x, y: cardInitialCenter.y + translation.y)
             
+            // If the user starts dragging in the bottom half of the card, reverse the above rotation.
+            var dir = 1.0
+            if cardInitialCenter.y < location.y {
+                dir = 1.0
+            } else {
+                dir = -1.0
+            }
+            
+            // For positive horizontal translations, rotate the image clockwise. 
+            if translation.x > 0 {
+                // Update the rotation from an existing transform
+                cardImageView.transform = cardImageView.transform.rotated(by: CGFloat(3.14 * dir * M_PI / 180))
+            }
+            // For negative horizontal translations, rotate the image counterclockwise.
+            else if translation.x < 0 {
+                // Update the rotation from an existing transform
+                cardImageView.transform = cardImageView.transform.rotated(by: CGFloat(-3.14 * dir * M_PI / 180))
+            }
         } else if (sender as AnyObject).state == .ended {
             
         }
